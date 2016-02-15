@@ -2,7 +2,7 @@
 #include <Ethernet.h>
 #include <aWOT.h>
 #include <FastLED.h>
-
+#include <string.h>  
 
 /*  Layout  
  * 
@@ -56,7 +56,7 @@ String mode;
 
 long monoC1;
 long triC1, triC2, triC3; // W S =
-
+long colorArray1[NUM_LEDS_PIN_1], colorArray2[NUM_LEDS_PIN_2], colorArray3[NUM_LEDS_PIN_3];
 
 
 
@@ -128,6 +128,7 @@ void loop(){
  * Index-handler
  * -----------------------------------------------------------------------------------------
  */ 
+ 
 void indexCmd(Request &req, Response &res) {
   // P macro for printing strings from program memory
   P(index) =
@@ -149,6 +150,7 @@ void indexCmd(Request &req, Response &res) {
  * monoColor
  * -----------------------------------------------------------------------------------------
  */
+ 
 void monoColor(Request &req, Response &res) {
 
   String helpMonoC1 = req.query("color");  
@@ -166,6 +168,7 @@ void monoColor(Request &req, Response &res) {
  * triColor
  * -----------------------------------------------------------------------------------------
  */
+ 
 void triColor(Request &req, Response &res) {
   
   String helpTriC1 = req.query("color1");  // W
@@ -188,15 +191,46 @@ void triColor(Request &req, Response &res) {
 }
 
 /* -----------------------------------------------------------------------------------------
- * 
+ *  multiColor   
+ *  
+ *  colorA for colorArray1  
+ *  colorB for colorArray2 
+ *  colorC for colorArray3 
  * -----------------------------------------------------------------------------------------
  */
+ 
 void multiColor(Request &req, Response &res) {
+
+  for(int i = 0; i < NUM_LEDS_PIN_1; i++)
+  {
+    String help = "colorA" + String(i);
+    String result = req.query(help.c_str());
+    colorArray1[i] = strtoul(result.c_str(), NULL, 16);   
+  }
+  
+  for(int i = 0; i < NUM_LEDS_PIN_2; i++)
+  {
+    String help = "colorB" + String(i);
+    String result = req.query(help.c_str());
+    colorArray2[i] = strtoul(result.c_str(), NULL, 16);  
+  }
+  
+  for(int i = 0; i < NUM_LEDS_PIN_3; i++)
+  {
+    String help = "colorC" + String(i);
+    String result = req.query(help.c_str());
+    colorArray3[i] = strtoul(result.c_str(), NULL, 16);  
+  }
+  
   mode ="multi";
+
+  res.success("text/plain");
+  
+  res.print("multi");
 }
 
 /* -----------------------------------------------------------------------------------------
- * 
+ * equalizerColor
  * -----------------------------------------------------------------------------------------
  */
 void equalizerColor(Request &req, Response &res) {
@@ -204,7 +238,7 @@ void equalizerColor(Request &req, Response &res) {
 }
 
 /* -----------------------------------------------------------------------------------------
- * 
+ * rainbowColor
  * -----------------------------------------------------------------------------------------
  */
 void rainbowColor(Request &req, Response &res) {
@@ -212,8 +246,7 @@ void rainbowColor(Request &req, Response &res) {
 }
 
 /* -----------------------------------------------------------------------------------------
- *    
- *  
+ *  freeControlColor
  *  -----------------------------------------------------------------------------------------
  */
 void freeControlColor(Request &req, Response &res) {
@@ -276,12 +309,12 @@ void showLight(){
 
     /*  Layout   
      * 
-     *                  6  7  X  8  9  10 11 X 12 13  X 14 15  16 17
+     *                  5  6  X  7  8  9  10 X 11 12  X 13 14 15  16
      *                  W  W  P  W  W  W  W  P  E  E  P  W  W  W  W
-     *     4 5        WS                                           SW     18 19
-     *     2 3      WS                                               SW   20 21
-     *     1      S                                                    SW 22 23
-     *                                                                  S 24
+     *     3 4        WS                                           SW     17 18
+     *     1 2      WS                                               SW   19 20
+     *     0      S                                                    SW 21 22
+     *                                                                  S 23
      *      =   ==                                                       =
      * 
      * 
@@ -298,7 +331,7 @@ void showLight(){
       for(int i =0; i < NUM_LEDS_PIN_1; i++)
       {
   
-        if( ((i % 2) == 0) && (i < 6) )
+        if( ((i % 2) == 0) && (i < 5) )
         {
           leds1[i] = triC2;
         }
@@ -307,12 +340,12 @@ void showLight(){
           leds1[i] = triC1;
         }
   
-        if( (i >= 6) && (i < 18 ) )
+        if( (i >= 5) && (i < 17 ) )
         {
           leds1[i] = triC1;
         }
   
-        if( ((i % 2) == 0) && (i >=18) )
+        if( ((i % 2) == 1) && (i >=17) )
         {
           leds1[i] = triC2;
         }
@@ -351,7 +384,10 @@ void showLight(){
     
     if(mode=="multi") //------------------------------------------------------------------------multi
     {
-    Serial.println("multiColor processing");
+
+      assignMuliColors();
+      FastLED.show();
+      Serial.println("multiColor processing");
     } //----------------------------------------------------------------------------------------multi
     
     
@@ -376,4 +412,47 @@ void showLight(){
 
 
 }
+
+
+
+/* =============================================================================================
+ * 
+ *  Help functions
+ * 
+ * =============================================================================================
+ */
+
+
+ /* -----------------------------------------------------------------------------------------
+ *   set Colors with the colorArrays
+ * -----------------------------------------------------------------------------------------
+ */
+
+void assignMuliColors(){
+  
+  for(int i =0; i < NUM_LEDS_PIN_1; i++)
+      {
+          leds1[i] = colorArray1[i];
+      } 
+  
+      for(int i =0; i < NUM_LEDS_PIN_2; i++)
+      {
+  
+        leds2[i] = colorArray2[i];
+        
+      } 
+  
+      for(int i =0; i < NUM_LEDS_PIN_3; i++)
+      {
+         
+        leds3[i] = colorArray3[i];
+      }     
+}
+
+/* -----------------------------------------------------------------------------------------
+ * 
+ * -----------------------------------------------------------------------------------------
+ */
+
+ 
 
