@@ -13,7 +13,7 @@
  * P ... PLUG ELEMENT (NO LED)
  * = ... WALL ELEMENT
  * F ... FURNITURE ELEMENT
- * U ... UNTER FURNITURE
+ * U ... UNTER FURNITURE Element
  * 
  * 
  * stair & wall lights 
@@ -47,13 +47,15 @@
 #define DATA_PIN_3 5 // TV wall lights
 
 
-CRGB leds[NUM_LEDS];
+CRGB leds1[NUM_LEDS_PIN_1];
+CRGB leds2[NUM_LEDS_PIN_2];
+CRGB leds3[NUM_LEDS_PIN_3];
 EthernetServer server(80);
 WebApp app;
 String mode;
 
-String monoC1,c1,c2,c3,c4,c5,c6;
-String triC1, triC2, triC3;
+long monoC1;
+long triC1, triC2, triC3; // W S =
 
 
 
@@ -80,7 +82,9 @@ void setup() {
 
 
   //-------------------------------------------------------------------------------------- LED-Setup
-  FastLED.addLeds<NEOPIXEL, DATA_PIN_1>(leds, NUM_LEDS);
+  FastLED.addLeds<NEOPIXEL, DATA_PIN_1>(leds1, NUM_LEDS_PIN_1);
+  FastLED.addLeds<NEOPIXEL, DATA_PIN_2>(leds2, NUM_LEDS_PIN_2);
+  FastLED.addLeds<NEOPIXEL, DATA_PIN_3>(leds3, NUM_LEDS_PIN_3);
 
 
 
@@ -146,12 +150,16 @@ void indexCmd(Request &req, Response &res) {
  * -----------------------------------------------------------------------------------------
  */
 void monoColor(Request &req, Response &res) {
+
+  String helpMonoC1 = req.query("color");  
+  const char *c = helpMonoC1.c_str();
+  
   mode ="mono";
-  String color = req.query("color"); // "lolcat"
+  monoC1 = strtoul(c, NULL, 16);
+  
   res.success("text/plain");
-  res.print(color);
-  monoC1=color;
-   
+  res.print(helpMonoC1);
+  
 }
 
 /* -----------------------------------------------------------------------------------------
@@ -159,17 +167,23 @@ void monoColor(Request &req, Response &res) {
  * -----------------------------------------------------------------------------------------
  */
 void triColor(Request &req, Response &res) {
+  
+  String helpTriC1 = req.query("color1");  // W
+  String helpTriC2 = req.query("color2");  // S
+  String helpTriC3 = req.query("color3");  // = 
+  String triColors = helpTriC1 + " " + helpTriC2+ " " + helpTriC3; 
+
+  triC1 = strtoul(helpTriC1.c_str(), NULL, 16);
+  triC2 = strtoul(helpTriC2.c_str(), NULL, 16);
+  triC3 = strtoul(helpTriC3.c_str(), NULL, 16);
+  
   mode ="tri";
-  String color1 = req.query("color1"); // "lolcat"
-  String color2 = req.query("color2");
-  String color3 = req.query("color3");
-  triC1=color1;
-  triC2=color2;
-  triC3=color3;
+
+  
   res.success("text/plain");
-  String colors = color1 + " " + color2+ " " + color3; 
-  res.print( colors);
-  //res.print(type2);
+  
+  res.print(triColors);
+  
   
 }
 
@@ -236,21 +250,101 @@ void showLight(){
     if(mode=="mono") //-------------------------------------------------------------------------mono
     {
 
-    for(int i =0; i < NUM_LEDS; i++)
-    {
-      const char * c = monoC1.c_str();
-      leds[i] = strtoul(c, NULL, 16);//0xFF44DD;  //hex Colorcode
-    }  
+      for(int i =0; i < NUM_LEDS_PIN_1; i++)
+      {
+         
+        leds1[i] = monoC1;  //hex Colorcode
+      }  
+      
+      for(int i =0; i < NUM_LEDS_PIN_2; i++)
+      {
+          
+        leds2[i] = monoC1;
+      } 
+      
+      for(int i =0; i < NUM_LEDS_PIN_3; i++)
+      {
+         
+        leds3[i] = monoC1;
+      } 
+      
+      FastLED.show(); 
     
-    FastLED.show(); 
-    
-    Serial.println("monoColor processing");
+      Serial.println("monoColor processing");
     } //----------------------------------------------------------------------------------------mono
-    
+
+
+    /*  Layout   
+     * 
+     *                  6  7  X  8  9  10 11 X 12 13  X 14 15  16 17
+     *                  W  W  P  W  W  W  W  P  E  E  P  W  W  W  W
+     *     4 5        WS                                           SW     18 19
+     *     2 3      WS                                               SW   20 21
+     *     1      S                                                    SW 22 23
+     *                                                                  S 24
+     *      =   ==                                                       =
+     * 
+     * 
+     */
+
+ 
     
     if(mode=="tri") //--------------------------------------------------------------------------tri
     {
-    Serial.println("triColor processing");
+
+      //    W triC1          S triC2        =  triC3
+  
+     
+      for(int i =0; i < NUM_LEDS_PIN_1; i++)
+      {
+  
+        if( ((i % 2) == 0) && (i < 6) )
+        {
+          leds1[i] = triC2;
+        }
+        else
+        {
+          leds1[i] = triC1;
+        }
+  
+        if( (i >= 6) && (i < 18 ) )
+        {
+          leds1[i] = triC1;
+        }
+  
+        if( ((i % 2) == 0) && (i >=18) )
+        {
+          leds1[i] = triC2;
+        }
+        else
+        {
+          leds1[i] = triC1;
+        } 
+         
+      } 
+  
+      for(int i =0; i < NUM_LEDS_PIN_2; i++)
+      {
+  
+        if( (i % 2) == 0 )
+        {
+          leds2[i] = triC2;
+        }
+        else{
+          leds2[i] = triC1;
+        }
+        
+      } 
+  
+      for(int i =0; i < NUM_LEDS_PIN_3; i++)
+      {
+         
+        leds3[i] = triC3;
+      } 
+  
+      FastLED.show(); 
+  
+      Serial.println("triColor processing");
     } //----------------------------------------------------------------------------------------tri
     
     
@@ -264,19 +358,19 @@ void showLight(){
     
     if(mode=="equalizer") //--------------------------------------------------------------------equalizer
     {
-    Serial.println("triColor processing");
+    Serial.println("equalizer processing");
     } //----------------------------------------------------------------------------------------equalizer
     
     
     if(mode=="rainbow") //----------------------------------------------------------------------rainbow
     {
-    Serial.println("monoColor processing");
+    Serial.println("rainbow  processing");
     } //----------------------------------------------------------------------------------------rainbow
     
     
     if(mode=="free") //-------------------------------------------------------------------------free
     {
-    Serial.println("triColor processing");
+    Serial.println("free processing");
     } //----------------------------------------------------------------------------------------free
  
 
