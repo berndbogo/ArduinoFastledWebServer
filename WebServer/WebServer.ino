@@ -4,10 +4,47 @@
 #include <FastLED.h>
 
 
-#define NUM_LEDS 1
-#define DATA_PIN_1 3
-#define DATA_PIN_2 4
-#define DATA_PIN_3 5
+/*  Layout  
+ * 
+ * 
+ * S ... VERTICAL ELEMENT 
+ * W ... HORIZONTAL ELEMENT 
+ * E ... CORNER ELEMENT
+ * P ... PLUG ELEMENT (NO LED)
+ * = ... WALL ELEMENT
+ * F ... FURNITURE ELEMENT
+ * U ... UNTER FURNITURE
+ * 
+ * 
+ * stair & wall lights 
+ * 
+ * 
+ *                  WWPWWWWPEEPWWWW
+ *               WS                SW
+ *             WS                    SW  
+ *           S                        SW 
+ *                                      S
+ *      =   ==                           =
+ * 
+ * 
+ * 
+ * 
+ * 
+ * TV wall lights
+ *   
+ *    UF UF UF 
+ * 
+ * 
+ */
+ 
+
+#define NUM_LEDS_PIN_1 1 // stair lights     
+#define NUM_LEDS_PIN_2 4 // wall lights
+#define NUM_LEDS_PIN_3 6 // TV wall lights
+
+#define DATA_PIN_1 3 // stair lights
+#define DATA_PIN_2 4 // wall lights
+#define DATA_PIN_3 5 // TV wall lights
 
 
 CRGB leds[NUM_LEDS];
