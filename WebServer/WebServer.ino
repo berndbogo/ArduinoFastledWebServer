@@ -78,7 +78,7 @@ void loop(){
 /* ========================================================================================
  * 
  * Define some handler functions which set the different modes and colors 
- * from the global section
+ *  
  * 
  * ========================================================================================
  */
@@ -161,8 +161,8 @@ void rainbowColor(Request &req, Response &res) {
 }
 
 /* -----------------------------------------------------------------------------------------
- * Durch andauernde http requests steuerbar 
- * ledpanelfarbe delay .... mitgeben und damit steuern
+ *    
+ *  
  *  -----------------------------------------------------------------------------------------
  */
 void freeControlColor(Request &req, Response &res) {
