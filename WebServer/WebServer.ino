@@ -246,7 +246,7 @@ void rainbowColor(Request &req, Response &res) {
 }
 
 /* -----------------------------------------------------------------------------------------
- *  freeControlColor
+ *  freeControlColor 
  *  -----------------------------------------------------------------------------------------
  */
 void freeControlColor(Request &req, Response &res) {
@@ -307,7 +307,7 @@ void showLight(){
     } //----------------------------------------------------------------------------------------mono
 
 
-    /*  Layout   
+    /*  Layout   + index
      * 
      *                  5  6  X  7  8  9  10 X 11 12  X 13 14 15  16
      *                  W  W  P  W  W  W  W  P  E  E  P  W  W  W  W
