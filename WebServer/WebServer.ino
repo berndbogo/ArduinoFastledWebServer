@@ -55,7 +55,7 @@ WebApp app;
 String mode = "tri";
 
 long monoC1;
-long triC1 = 0xee6146, triC2 = 0x75af1d, triC3 = 0xffffff; // W S =
+long triC1 = 0x0000FF, triC2 = 0x00FF00, triC3 = 0xffffff; // W S =
 long colorArray1[NUM_LEDS_PIN_1], colorArray2[NUM_LEDS_PIN_2], colorArray3[NUM_LEDS_PIN_3];
 
 
@@ -328,10 +328,11 @@ void showLight(){
       //    W triC1          S triC2        =  triC3
   
 
-      for(int i =0; i < NUM_LEDS_PIN_1; i++)
+      /*for(int i =0; i < NUM_LEDS_PIN_1; i++)
       {
         leds1[i] = 0x000000;
-      }
+      }*/
+      
       for(int i =0; i < NUM_LEDS_PIN_1; i++)
       {
   
