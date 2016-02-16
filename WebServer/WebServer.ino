@@ -38,7 +38,7 @@
  */
  
 
-#define NUM_LEDS_PIN_1 1 // stair lights     
+#define NUM_LEDS_PIN_1 24 // stair lights     
 #define NUM_LEDS_PIN_2 4 // wall lights
 #define NUM_LEDS_PIN_3 6 // TV wall lights
 
@@ -52,10 +52,10 @@ CRGB leds2[NUM_LEDS_PIN_2];
 CRGB leds3[NUM_LEDS_PIN_3];
 EthernetServer server(80);
 WebApp app;
-String mode;
+String mode = "tri";
 
 long monoC1;
-long triC1, triC2, triC3; // W S =
+long triC1 = 0xee6146, triC2 = 0x75af1d, triC3 = 0xffffff; // W S =
 long colorArray1[NUM_LEDS_PIN_1], colorArray2[NUM_LEDS_PIN_2], colorArray3[NUM_LEDS_PIN_3];
 
 
@@ -327,7 +327,11 @@ void showLight(){
 
       //    W triC1          S triC2        =  triC3
   
-     
+
+      for(int i =0; i < NUM_LEDS_PIN_1; i++)
+      {
+        leds1[i] = 0x000000;
+      }
       for(int i =0; i < NUM_LEDS_PIN_1; i++)
       {
   
@@ -335,7 +339,7 @@ void showLight(){
         {
           leds1[i] = triC2;
         }
-        else
+        else if( ((i % 2) == 1) && (i < 5))
         {
           leds1[i] = triC1;
         }
@@ -349,7 +353,7 @@ void showLight(){
         {
           leds1[i] = triC2;
         }
-        else
+        else if( ((i % 2) == 0) && (i >=17) )
         {
           leds1[i] = triC1;
         } 
