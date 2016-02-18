@@ -139,7 +139,7 @@ void setup() {
   app.get("/mono", &monoColor);
   app.get("/tri", &triColor);
   app.get("/multi", &multiColor);
-  app.get("/equalizer", &equalizerColor);
+  app.get("/visualizer", &visualizerColor);
   app.get("/rainbow", &rainbowColor);
   app.get("/cats", &queryParams);
 
@@ -285,11 +285,11 @@ void multiColor(Request &req, Response &res) {
 }
 
 /* -----------------------------------------------------------------------------------------
- * equalizerColor
+ * visualizerColor
  * -----------------------------------------------------------------------------------------
  */
-void equalizerColor(Request &req, Response &res) {
-  mode ="equalizer";
+void visualizerColor(Request &req, Response &res) {
+  mode ="visualizer";
 }
 
 /* -----------------------------------------------------------------------------------------
@@ -461,10 +461,10 @@ void showLight(){
     
     
     
-    if(mode=="equalizer") //--------------------------------------------------------------------equalizer
+    if(mode=="visualizer") //--------------------------------------------------------------------visualizer
     {
-    Serial.println("equalizer processing");
-    } //----------------------------------------------------------------------------------------equalizer
+    Serial.println("visualizer processing");
+    } //----------------------------------------------------------------------------------------visualizer
     
     
     if(mode=="rainbow") //----------------------------------------------------------------------rainbow
